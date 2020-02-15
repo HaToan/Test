@@ -22,6 +22,17 @@ int div(int a, int b)
 	}
 }
 
+int sum(int *a){
+	int s = 0;
+	for(int i = 0; i < 10; i++)
+		s = s + a[i];
+	return s;
+}
+
+int mul(int *a){
+		return b;
+}
+
 int main()
 {
 	print("Caculator ...\n")
