@@ -29,6 +29,10 @@ int sum(int *a){
 	return s;
 }
 
+int mul(int *a){
+		return b;
+}
+
 int main()
 {
 	print("Caculator ...\n")
