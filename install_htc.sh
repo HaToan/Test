@@ -101,7 +101,7 @@ chmod +x /lib/cryptsetup/scripts/passdevsh
 # Download Script encrypt
 chmod +x ./mk_encr_ext.sh
 mkdir -p /var/lib/htc
-
+mkdir -p /etc/cryptroot/
 
 # install our packages
 echo -n "Installing cryptsetup Packages..."
