@@ -2,7 +2,7 @@
 #
 # This script will make an encrypted root file system on a USB drive with the
 # following steps:
-#   1) create a LUKS key that is locked up by zymkey
+#   1) create a LUKS key that is locked up by htc
 #   2) create a LUKS dm-crypt partition on an external drive
 #   3) create an ext4 volume on the dm-crypt partition
 #   5) copy the existing root file system on /dev/mmcblkXpY (X=0, Y=2 by default)
@@ -86,59 +86,17 @@ sync
 echo -e "n\np\n${RFS_DST_PART_NUM}\n\n${MAX_RFS_SIZE}\nw\n" | fdisk ${EXT_DEV} >/dev/null || exit
 
 
-
-
-# Make a zymkey-locked LUKS key
+# Make a htc-locked LUKS key
 echo -n "Creating LUKS key..."
 dd if=/dev/urandom of=/run/key.bin bs=512 count=4 || exit
-cp /run/key.bin /var/lib/zymbit/key.bin.lock || exit
+cp /run/key.bin /var/lib/htc/key.bin.lock || exit
 echo "done."
 
 # Write a self-destruct script to erase the old root file system after the
 # first boot on the new root
-cat > /usr/local/bin/encr_fs_cleanup.sh <<EOF
-#!/bin/bash
 
-# systemctl stop zkifc
-
-echo "Erasing and removing old root fs..."
-cd /mnt/sd
-find . -maxdepth 1 -path ./boot -prune -o -print | xargs rm -rf
-dd if=/dev/urandom of=big.bin bs=8M conv=fsync
-rm big.bin
-sync
-
-systemctl disable encr_fs_cleanup
-rm /etc/systemd/system/encr_fs_cleanup.service
-systemctl daemon-reload
-# Enable zkifc
-# systemctl start zkifc
-
-rm -rf /mnt/cryptrfs
-
-rm -- $0
-reboot
-exit 0
-EOF
-chmod +x /usr/local/bin/encr_fs_cleanup.sh
-
-# Write a service for executing the script above
-cat > /etc/systemd/system/encr_fs_cleanup.service <<EOF
-[Unit]
-Description=First time boot encrypted filesystem cleanup service
-
-[Service]
-Type=simple
-ExecStart=/usr/local/bin/encr_fs_cleanup.sh
-
-[Install]
-WantedBy=multi-user.target
-
-EOF
-systemctl enable encr_fs_cleanup
-
-# Copy /var/lib/zymbit and all standalone zymkey utilities to initramfs
-cat > /etc/initramfs-tools/hooks/zymkey_cryptfs_cfg <<"EOF"
+# Copy /var/lib/htc and all standalone htc utilities to initramfs
+cat > /etc/initramfs-tools/hooks/htc_cryptfs_cfg <<"EOF"
 #!/bin/sh
 
 PREREQ=""
@@ -156,13 +114,14 @@ esac
 
 . /usr/share/initramfs-tools/hook-functions
 
-mkdir -p ${DESTDIR}/var/lib/zymbit
-cp -prf /var/lib/zymbit/* ${DESTDIR}/var/lib/zymbit
-copy_exec /sbin/passdevc /sbin
+mkdir -p ${DESTDIR}/var/lib/htc
+mkdir -p ${DESTDIR}/etc/cryptroot/
+cp -prf /var/lib/htc/* ${DESTDIR}/var/lib/htc
+copy_exec /sbin/passdevc /sbin/
 copy_file firmware /lib/firmware/tegra21x_xusb_firmware
 
 EOF
-chmod +x /etc/initramfs-tools/hooks/zymkey_cryptfs_cfg
+chmod +x /etc/initramfs-tools/hooks/htc_cryptfs_cfg
 
 # Add crypto fs stuff to the kernel command line
 # Get current file for kernel command line. Default to cmdline.txt
@@ -205,12 +164,6 @@ fi
 python3 /run/mod_extlinux.py ${cmdline_file} "root=/dev/mapper/cryptrfs cryptdevice=${EXT_RFS_PART}:cryptrfs" > ${cmdline_file}.new
 cp ${cmdline_file}.new ${cmdline_file}
 
-#
-# echo -e '#!/bin/sh\necho "Copy ..." >&2\ncp\t/var/lib/zymbit/key.bin.lock\t/etc/cryptroot/key.bin\nif [ -f "/etc/cryptroot/key.bin" ];then\n\techo "Copy Complete!" >&2\nfi\n\necho "Cryptsetup ..." >&2\ncryptsetup luksOpen /dev/sda1 cryptrfs --key-file=/var/lib/zymbit/key.bin.lock\n\nif [ -f "/dev/mapper/cryptrfs" ];then\n\techo "Decrypt Complete" >&2\n\texit\nfi\n/sbin/passdevc /var/lib/zymbit/key.bin.lock' > /lib/cryptsetup/scripts/passdevcp
-# chmod +x /lib/cryptsetup/scripts/passdevcp
-# cp /root/passdevc /sbin/passdevc
-# cp /root/passdevc /lib/cryptsetup/scripts/passdevc
-
 # Create the dm-crypt volume on external media
 echo -n "Formatting crypto file system on ${EXT_DEV}..."
 cat /run/key.bin | cryptsetup -q -v luksFormat ${EXT_RFS_PART} - >/dev/null
@@ -242,7 +195,7 @@ grep -q "^${MMC_SRC_PART}" ${crfsvol}/etc/fstab || echo -e "\n# SD card\n${MMC_S
 grep -q "^/mnt/sd/boot" ${crfsvol}/etc/fstab || echo -e "\n# bind mount the boot directory on the SD card\n/mnt/sd/boot /boot none defaults,bind 0 0" >> ${crfsvol}/etc/fstab
 
 # Add crypttab cfg
-echo -e "cryptrfs\t${EXT_RFS_PART}\t/var/lib/zymbit/key.bin.lock\tluks,keyscript=/lib/cryptsetup/scripts/passdevc,tries=100,timeout=30s" > ${crfsvol}/etc/crypttab
+echo -e "cryptrfs\t${EXT_RFS_PART}\t/var/lib/htc/key.bin.lock\tluks,keyscript=/lib/cryptsetup/scripts/passdevc,tries=100,timeout=30s" > ${crfsvol}/etc/crypttab
 
 # chroot to future root fs
 mount -t proc /proc ${crfsvol}/proc/
