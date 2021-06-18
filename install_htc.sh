@@ -84,11 +84,7 @@ echo -n "Installing cryptsetup Packages..."
 apt install -y cryptsetup &>/dev/nul || exit
 
 # My app
-echo -n "Installing htc Packages..."
-git clone https://github.com/HaToan/test.git
-
 # Install passdevc
-cd test
 gcc -s -o ./passdevc passdevc.c
 chmod +x ./passdevc
 
