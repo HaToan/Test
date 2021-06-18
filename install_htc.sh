@@ -105,7 +105,7 @@ mkdir -p /etc/cryptroot/
 
 # install our packages
 echo -n "Installing cryptsetup Packages..."
-apt install -y cryptsetup &>/dev/nul || exit
+apt install -y cryptsetup rsync &>/dev/nul || exit
 
 echo "Rebooting now..."
 reboot
