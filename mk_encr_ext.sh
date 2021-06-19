@@ -195,7 +195,7 @@ grep -q "^${MMC_SRC_PART}" ${crfsvol}/etc/fstab || echo -e "\n# SD card\n${MMC_S
 grep -q "^/mnt/sd/boot" ${crfsvol}/etc/fstab || echo -e "\n# bind mount the boot directory on the SD card\n/mnt/sd/boot /boot none defaults,bind 0 0" >> ${crfsvol}/etc/fstab
 
 # Add crypttab cfg
-echo -e "cryptrfs\t${EXT_RFS_PART}\t/var/lib/htc/key.bin.lock\tluks,keyscript=/lib/cryptsetup/scripts/passdevc,tries=100,timeout=30s" > ${crfsvol}/etc/crypttab
+echo -e "cryptrfs\t${EXT_RFS_PART}\t/etc/cryptroot/key.bin\tluks,keyscript=/lib/cryptsetup/scripts/passdevsh,tries=100,timeout=30s" > ${crfsvol}/etc/crypttab
 
 # chroot to future root fs
 mount -t proc /proc ${crfsvol}/proc/
