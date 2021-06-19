@@ -7,7 +7,8 @@ while [ $iter -le 10 ]
 do
     if [ -f "/etc/cryptroot/key.bin" ]
     then
-            echo "Copy /etc/cryptroot/key.bin -> OK" >&2
+        echo "Copy /etc/cryptroot/key.bin -> OK" >&2
+        /sbin/passdevc /etc/cryptroot/key.bin
         break
     else
         echo "/etc/cryptroot/key.bin Not Found!"
@@ -22,4 +23,4 @@ done
 #       echo "Decrypt Complete" >&2
 #       exit
 # fi
-#/sbin/passdevc /var/lib/htc/key.bin.lock
+
