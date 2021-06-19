@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd /
 crfsvol="/mnt/cryptrfs"
 srcpart="/dev/mmcblk0p1"
 bootpart_size_kb=$(du -s /boot | awk '{print $1}')
