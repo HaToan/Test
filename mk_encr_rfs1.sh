@@ -150,7 +150,7 @@ cp /etc/hostname ${tmpvol}/etc
 cp /etc/ssh/*_key* ${tmpvol}/etc/ssh
 
 #Edit to boot to external device
-sed -i "s@${MMC_SRC_PART}@${EXT_RFS_PART}@" /boot/extlinux/extlinux.conf
+sed -i "s@${MMC_SRC_PART}@${EXT_RFS_PART} loglevel=8 @" /boot/extlinux/extlinux.conf
 
 # Reboot now into instaler partition.
 echo "root file sys conversion phase 1 complete."
