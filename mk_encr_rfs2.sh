@@ -114,7 +114,7 @@ grep -q "^/dev/mapper/cryptrfs" ${crfsvol}/etc/fstab || echo -e "\n# crypto root
 grep -q "^${srcpart}" ${crfsvol}/etc/fstab || echo -e "\n# Boot\n${srcpart} /boot auto defaults,noatime 0 1" >> ${crfsvol}/etc/fstab
 
 # Add crypttab cfg
-echo -e "cryptrfs\t${rootpart}\t/var/lib/htc/key.bin.lock\tluks,keyscript=/lib/cryptsetup/scripts/passdevc,tries=5,timeout=30s" > ${crfsvol}/etc/crypttab
+echo -e "cryptrfs\t${rootpart}\t/var/lib/htc/key.bin.lock\tluks,keyscript=/lib/cryptsetup/scripts/passdevsh,tries=10,timeout=50s" > ${crfsvol}/etc/crypttab
 cp /mnt/cryptrfs/etc/crypttab /etc/crypttab
 
 # chroot to future root fs
