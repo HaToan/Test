@@ -141,8 +141,8 @@ fi
 
 # Remove any stale bindings that might be on the tmproot and copy over
 # the existing bindings from current root to tmproot
-rm -rf ${tmpvol}/var/lib/zymbit/ 2>/dev/null
-cp -rpf /var/lib/zymbit/ ${tmpvol}/var/lib/
+rm -rf ${tmpvol}/var/lib/htc/ 2>/dev/null
+cp -rpf /var/lib/htc/ ${tmpvol}/var/lib/
 # Copy the /etc/hosts and /etc/hostname
 cp /etc/hosts ${tmpvol}/etc
 cp /etc/hostname ${tmpvol}/etc
