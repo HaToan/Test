@@ -166,7 +166,7 @@ do
 done
 
 #Modify extlinux to boot to the new root fs and boot
-sed -i "s@${srcpart}@UUID=${crypt_UUID} cryptdevice=UUID=${rootpart_UUID}:cryptrfs@" /boot/extlinux/extlinux.conf
+sed -i "s@${srcpart}@UUID=${crypt_UUID} cryptdevice=UUID=${rootpart_UUID}:cryptrfs loglevel=8@" /boot/extlinux/extlinux.conf
 sed -i "s@/boot/@/@" /boot/extlinux/extlinux.conf
 
 # Reboot now
