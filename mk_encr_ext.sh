@@ -95,6 +95,47 @@ echo "done."
 # Write a self-destruct script to erase the old root file system after the
 # first boot on the new root
 
+cat > /usr/local/bin/encr_fs_cleanup.sh <<EOF
+#!/bin/bash
+
+systemctl stop zkifc
+
+echo "Erasing and removing old root fs..."
+cd /mnt/sd
+find . -maxdepth 1 -path ./boot -prune -o -print | xargs rm -rf
+dd if=/dev/urandom of=big.bin bs=8M conv=fsync
+rm big.bin
+sync
+
+systemctl disable encr_fs_cleanup
+rm /etc/systemd/system/encr_fs_cleanup.service
+systemctl daemon-reload
+# Enable zkifc
+systemctl start zkifc
+
+rm -rf /mnt/cryptrfs
+
+rm -- $0
+reboot
+exit 0
+EOF
+chmod +x /usr/local/bin/encr_fs_cleanup.sh
+
+# Write a service for executing the script above
+cat > /etc/systemd/system/encr_fs_cleanup.service <<EOF
+[Unit]
+Description=First time boot encrypted filesystem cleanup service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/encr_fs_cleanup.sh
+
+[Install]
+WantedBy=multi-user.target
+
+EOF
+systemctl enable encr_fs_cleanup
+
 # Copy /var/lib/htc and all standalone htc utilities to initramfs
 cat > /etc/initramfs-tools/hooks/htc_cryptfs_cfg <<"EOF"
 #!/bin/sh
