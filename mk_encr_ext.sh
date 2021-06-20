@@ -116,11 +116,11 @@ esac
 
 mkdir -p ${DESTDIR}/var/lib/htc/
 mkdir -p ${DESTDIR}/etc/cryptroot/
-cp -prf /var/lib/htc/* ${DESTDIR}/var/lib/htc
+cp -prf /var/lib/htc/* ${DESTDIR}/var/lib/htc/
 copy_exec /sbin/passdevc /sbin/
 copy_file firmware /lib/firmware/tegra21x_xusb_firmware
-copy_exec /sbin/cryptsetup /sbin
-copy_exec /sbin/passdevcp /sbin
+copy_exec /sbin/cryptsetup /sbin/
+copy_exec /sbin/passdevcp /sbin/
 
 EOF
 chmod +x /etc/initramfs-tools/hooks/htc_cryptfs_cfg
