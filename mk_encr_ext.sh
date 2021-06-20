@@ -98,8 +98,6 @@ echo "done."
 cat > /usr/local/bin/encr_fs_cleanup.sh <<EOF
 #!/bin/bash
 
-systemctl stop zkifc
-
 echo "Erasing and removing old root fs..."
 cd /mnt/sd
 find . -maxdepth 1 -path ./boot -prune -o -print | xargs rm -rf
@@ -110,8 +108,6 @@ sync
 systemctl disable encr_fs_cleanup
 rm /etc/systemd/system/encr_fs_cleanup.service
 systemctl daemon-reload
-# Enable zkifc
-systemctl start zkifc
 
 rm -rf /mnt/cryptrfs
 
