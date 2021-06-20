@@ -10,7 +10,7 @@ do
     then
         echo "Copy /etc/cryptroot/key.bin -> OK" >&2
         /sbin/passdevc /etc/cryptroot/key.bin
-        break
+        exit
     else
         echo "/etc/cryptroot/key.bin Not Found!" >&2
        ((iter++))
