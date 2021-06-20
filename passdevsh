@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Copy ..." > &2
+echo "Copy ..." >&2
 cp      /var/lib/htc/key.bin.lock       /etc/cryptroot/key.bin
 
 iter=0
@@ -8,20 +8,19 @@ while [ $iter -le 10 ]
 do
     if [ -f "/etc/cryptroot/key.bin" ]
     then
-        echo "Copy /etc/cryptroot/key.bin -> OK" > &2
+        echo "Copy /etc/cryptroot/key.bin -> OK" >&2
         /sbin/passdevc /etc/cryptroot/key.bin
         break
     else
-        echo "/etc/cryptroot/key.bin Not Found!" > &2
+        echo "/etc/cryptroot/key.bin Not Found!" >&2
        ((iter++))
   fi
 done
 
-echo "Cryptsetup ..." > &2
-cryptsetup luksOpen /dev/sda1 cryptrfs --key-file=/var/lib/zymbit/key.bin.lock
+echo "Cryptsetup ..." >&2
+# cryptsetup luksOpen /dev/sda1 cryptrfs --key-file=/var/lib/zymbit/key.bin.lock
 
 # if [ -f "/dev/mapper/cryptrfs" ];then
 #       echo "Decrypt Complete" > &2
 #       exit
 # fi
-passdevc /var/lib/zymbit/key.bin.lock
