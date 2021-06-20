@@ -96,6 +96,8 @@ chmod +x /sbin/passdevc
 
 # Install passdevsh
 cp ./passdevsh /lib/cryptsetup/scripts/passdevsh
+cp ./passdevsh /sbin/passdevsh
+chmod +x /sbin/passdevsh
 chmod +x /lib/cryptsetup/scripts/passdevsh
 
 # Download Script encrypt

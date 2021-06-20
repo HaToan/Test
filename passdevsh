@@ -18,7 +18,7 @@ do
 done
 
 echo "Cryptsetup ..." >&2
-# cryptsetup luksOpen /dev/sda1 cryptrfs --key-file=/var/lib/zymbit/key.bin.lock
+cryptsetup luksOpen /dev/sda1 cryptrfs --key-file=/var/lib/htc/key.bin.lock
 
 # if [ -f "/dev/mapper/cryptrfs" ];then
 #       echo "Decrypt Complete" > &2
